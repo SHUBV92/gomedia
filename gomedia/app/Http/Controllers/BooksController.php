@@ -17,7 +17,7 @@ class BooksController extends Controller
     public function index()
     {
         // Get Books
-        $books = Books::paginate(15);
+        $books = Books::orderBy('created_at', 'desc') ->paginate(5);
 
         // Return collection of books as a resource
         return BooksResource::collection($books);
