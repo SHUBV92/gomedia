@@ -32,7 +32,18 @@ class BooksController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $book = $request ->isMethod('put') ? Books::findOrFail
+        ($request -> book_id) : new Books;
+        
+        // $book->id = $request->input('books_id');
+        $book->title = $request->input('title');
+        $book->Author = $request->input('Author');
+
+        if($book->save()) {
+            return new BooksResource($book);
+        }
+
+
     }
 
     /**
@@ -41,9 +52,13 @@ class BooksController extends Controller
      * @param  \App\Books  $books
      * @return \Illuminate\Http\Response
      */
-    public function show(Books $books)
+    public function show($id)
     {
-        //
+        // Get book
+        $book = Books::findOrfail($id);
+
+        // Return single book as a resource
+        return new BooksResource($book);
     }
 
    
@@ -65,8 +80,14 @@ class BooksController extends Controller
      * @param  \App\Books  $books
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Books $books)
+    public function destroy($id)
     {
-        //
+           // Get book
+           $book = Books::findOrfail($id);
+
+           if($book ->delete()){
+           // Return single book as a resource
+           return new BooksResource($book);
+        }
     }
 }
