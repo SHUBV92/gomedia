@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Books;
 use Illuminate\Http\Request;
+use App\Http\Requests;
+use App\Http\Resources\Books as BooksResource;
 
 class BooksController extends Controller
 {
@@ -14,19 +16,14 @@ class BooksController extends Controller
      */
     public function index()
     {
-        //
+        // Get Books
+        $books = Books::paginate(15);
+
+        // Return collection of books as a resource
+        return BooksResource::collection($books);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
+    
     /**
      * Store a newly created resource in storage.
      *
@@ -49,17 +46,7 @@ class BooksController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Books  $books
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Books $books)
-    {
-        //
-    }
-
+   
     /**
      * Update the specified resource in storage.
      *
