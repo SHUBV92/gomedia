@@ -1923,6 +1923,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1939,19 +1956,46 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {
     this.fetchBooks();
-    console.log("it ran");
-    console.log("books", books);
   },
   methods: {
-    fetchBooks: function fetchBooks() {
+    fetchBooks: function fetchBooks(page_url) {
       var _this = this;
 
-      fetch('http://localhost:8000/api/books').then(function (res) {
+      var vm = this;
+      page_url = page_url || 'http://localhost:8000/api/books';
+      fetch(page_url).then(function (res) {
         return res.json();
       }).then(function (res) {
         console.log(res.data);
         _this.books = res.data;
+        vm.makePagination(res.meta, res.links);
       });
+    },
+    makePagination: function makePagination(meta, links) {
+      var pagination = {
+        current_page: meta.current_page,
+        last_page: meta.last_page,
+        next_page_url: links.next,
+        prev_page_url: links.prev
+      };
+      this.pagination = pagination;
+    },
+    deleteBook: function deleteBook(id) {
+      var _this2 = this;
+
+      if (confirm('Are You Sure?')) {
+        fetch("api/book/".concat(id), {
+          method: 'delete'
+        }).then(function (res) {
+          return res.json();
+        }).then(function (data) {
+          alert("Book Removed");
+
+          _this2.fetchBooks();
+        })["catch"](function (err) {
+          return console.log(err);
+        });
+      }
     }
   }
 });
@@ -37553,17 +37597,86 @@ var render = function() {
     [
       _c("h2", [_vm._v("Books")]),
       _vm._v(" "),
-      _vm._l(_vm.books, function(book) {
-        return _c("div", { key: book.id, staticClass: "card card-body" }, [
-          _c("h3", [
-            _vm._v(
-              " \n        Shubinder\n        " +
-                _vm._s(_vm.article.title) +
-                "\n    "
+      _c("nav", { attrs: { "aria-label": "Page navigation example" } }, [
+        _c("ul", { staticClass: "pagination" }, [
+          _c(
+            "li",
+            {
+              staticClass: "page-item",
+              class: [{ disabled: !_vm.pagination.prev_page_url }]
+            },
+            [
+              _c(
+                "a",
+                {
+                  staticClass: "page-link",
+                  attrs: { href: "#" },
+                  on: {
+                    click: function($event) {
+                      return _vm.fetchBooks(_vm.pagination.prev_page_url)
+                    }
+                  }
+                },
+                [_vm._v("Previous")]
+              )
+            ]
+          ),
+          _vm._v(" "),
+          _c("li", { staticClass: "page-item disabled" }, [
+            _c(
+              "a",
+              { staticClass: "page-link text-dark", attrs: { href: "#" } },
+              [
+                _vm._v(
+                  "Page " +
+                    _vm._s(_vm.pagination.current_page) +
+                    " of " +
+                    _vm._s(_vm.pagination.last_page)
+                )
+              ]
             )
           ]),
           _vm._v(" "),
-          _c("p", [_vm._v(_vm._s(_vm.article.author))])
+          _c(
+            "li",
+            {
+              staticClass: "page-item",
+              class: [{ disabled: !_vm.pagination.next_page_url }],
+              on: {
+                click: function($event) {
+                  return _vm.fetchBooks(_vm.pagination.next_page_url)
+                }
+              }
+            },
+            [
+              _c("a", { staticClass: "page-link", attrs: { href: "#" } }, [
+                _vm._v("Next")
+              ])
+            ]
+          )
+        ])
+      ]),
+      _vm._v(" "),
+      _vm._l(_vm.books, function(book) {
+        return _c("div", { key: book.id, staticClass: "card card-body" }, [
+          _c("h3", [_vm._v(" \n        " + _vm._s(book.title) + "\n    ")]),
+          _vm._v(" "),
+          _c("p", [_vm._v(_vm._s(book.author))]),
+          _vm._v(" "),
+          _c("hr"),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-danger",
+              on: {
+                click: function($event) {
+                  return _vm.deleteBook(book.id)
+                }
+              }
+            },
+            [_vm._v("Delete")]
+          )
         ])
       })
     ],
