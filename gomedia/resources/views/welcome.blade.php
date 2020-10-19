@@ -23,7 +23,7 @@
             <navbar></navbar>
             <div class="container">
             <articles>
-                <h1>Hey</h1>
+                <h1>Favourite Books</h1>
             </articles>
         </div>
         </div>
